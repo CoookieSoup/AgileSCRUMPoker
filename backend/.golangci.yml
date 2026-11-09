@@ -1,0 +1,66 @@
+version: "2"
+
+linters:
+  default: none
+  enable:
+    - errcheck
+    - errorlint
+    - govet
+    - ineffassign
+    - lll
+    - nlreturn
+    - noinlineerr
+    - revive
+    - staticcheck
+    - unused
+    - varnamelen
+    - wsl_v5
+  settings:
+    lll:
+      line-length: 120
+    varnamelen:
+      min-name-length: 4
+      max-distance: 1
+      check-receiver: true
+      check-return: true
+      check-type-param: true
+      ignore-names:
+        - ctx
+        - err
+        - app
+        - ok
+        - t
+    wsl_v5:
+      allow-first-in-block: true
+      allow-whole-block: false
+      branch-max-lines: 2
+    revive:
+      rules:
+        - name: blank-imports
+        - name: context-as-argument
+        - name: error-return
+        - name: error-strings
+        - name: errorf
+        - name: if-return
+        - name: increment-decrement
+        - name: indent-error-flow
+        - name: range
+        - name: receiver-naming
+        - name: time-naming
+        - name: unexported-return
+        - name: unreachable-code
+        - name: unused-parameter
+        - name: var-declaration
+  exclusions:
+    generated: strict
+    paths:
+      - api/generated
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  exclusions:
+    generated: strict
+    paths:
+      - api/generated
