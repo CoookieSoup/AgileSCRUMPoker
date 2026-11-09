@@ -5,7 +5,9 @@ go 1.26.0
 tool github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen
 
 require (
+	github.com/coder/websocket v1.8.15
 	github.com/go-chi/chi/v5 v5.5.0
+	github.com/go-chi/cors v1.2.2
 	github.com/oapi-codegen/runtime v1.8.0
 	github.com/stretchr/testify v1.12.1
 	gorm.io/driver/mysql v1.6.0
