@@ -15,3 +15,16 @@ services:
       interval: 2s
       timeout: 5s
       retries: 30
+
+  server:
+    build: .
+    environment:
+      DATABASE_DSN: poker:poker@tcp(mysql:3306)/poker?parseTime=true&loc=UTC
+      HTTP_ADDRESS: :8080
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:5173}
+      CLEANUP_INTERVAL: 1m
+    ports:
+      - "${SERVER_PORT:-8090}:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy

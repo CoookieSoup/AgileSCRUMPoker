@@ -23,7 +23,7 @@ vet:
 	go vet -tags integration ./...
 
 up:
-	docker compose up -d --wait
+	docker compose up -d --build --wait
 
 down:
 	docker compose down -v
