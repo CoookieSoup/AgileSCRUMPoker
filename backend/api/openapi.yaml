@@ -1,0 +1,307 @@
+openapi: 3.0.3
+info:
+  title: Scrum Poker API
+  version: 1.0.0
+  description: >
+    REST commands for short-lived planning poker rooms. Live updates are delivered over the
+    WebSocket endpoint GET /api/v1/rooms/{code}/events, described in docs/realtime.md.
+servers:
+  - url: /api/v1
+paths:
+  /healthz:
+    get:
+      operationId: checkHealth
+      responses:
+        "200":
+          description: The service and its database are reachable.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Health"
+        "503":
+          $ref: "#/components/responses/Error"
+  /rooms:
+    post:
+      operationId: createRoom
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ParticipantRequest"
+      responses:
+        "201":
+          description: Room created; the caller is its host.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Session"
+        "400":
+          $ref: "#/components/responses/Error"
+        "422":
+          $ref: "#/components/responses/Error"
+  /rooms/{code}:
+    parameters:
+      - $ref: "#/components/parameters/Code"
+    get:
+      operationId: getRoom
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Current room state as seen by the caller.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoomState"
+        "401":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+    delete:
+      operationId: closeRoom
+      security:
+        - bearerAuth: []
+      responses:
+        "204":
+          description: Room closed and its data deleted.
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+  /rooms/{code}/participants:
+    parameters:
+      - $ref: "#/components/parameters/Code"
+    post:
+      operationId: joinRoom
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ParticipantRequest"
+      responses:
+        "201":
+          description: Joined the room.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Session"
+        "400":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "422":
+          $ref: "#/components/responses/Error"
+  /rooms/{code}/participants/me:
+    parameters:
+      - $ref: "#/components/parameters/Code"
+    delete:
+      operationId: leaveRoom
+      security:
+        - bearerAuth: []
+      responses:
+        "204":
+          description: Left the room.
+        "401":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+  /rooms/{code}/round:
+    parameters:
+      - $ref: "#/components/parameters/Code"
+    post:
+      operationId: startRound
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StartRoundRequest"
+      responses:
+        "201":
+          description: New round started, replacing any current round.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoomState"
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "422":
+          $ref: "#/components/responses/Error"
+  /rooms/{code}/round/vote:
+    parameters:
+      - $ref: "#/components/parameters/Code"
+    put:
+      operationId: castVote
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VoteRequest"
+      responses:
+        "204":
+          description: Vote stored or changed.
+        "400":
+          $ref: "#/components/responses/Error"
+        "401":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+        "422":
+          $ref: "#/components/responses/Error"
+  /rooms/{code}/round/reveal:
+    parameters:
+      - $ref: "#/components/parameters/Code"
+    post:
+      operationId: revealVotes
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Votes revealed. Repeating the call has no further effect.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RoomState"
+        "401":
+          $ref: "#/components/responses/Error"
+        "403":
+          $ref: "#/components/responses/Error"
+        "404":
+          $ref: "#/components/responses/Error"
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  parameters:
+    Code:
+      name: code
+      in: path
+      required: true
+      schema:
+        type: string
+  responses:
+    Error:
+      description: The request failed.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+  schemas:
+    Error:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: string
+          description: Stable machine-readable code, for example room_full.
+        message:
+          type: string
+    Health:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+    ParticipantRequest:
+      type: object
+      required: [displayName]
+      properties:
+        displayName:
+          type: string
+    StartRoundRequest:
+      type: object
+      properties:
+        label:
+          type: string
+        jiraKey:
+          type: string
+    VoteRequest:
+      type: object
+      required: [card]
+      properties:
+        card:
+          type: string
+          description: One of 1, 2, 3, 5, 8, 13, 21.
+    Session:
+      type: object
+      required: [participantId, sessionToken, room]
+      properties:
+        participantId:
+          type: string
+        sessionToken:
+          type: string
+        room:
+          $ref: "#/components/schemas/RoomState"
+    Participant:
+      type: object
+      required: [id, displayName, isHost, hasVoted]
+      properties:
+        id:
+          type: string
+        displayName:
+          type: string
+        isHost:
+          type: boolean
+        hasVoted:
+          type: boolean
+    Vote:
+      type: object
+      required: [participantId, card]
+      properties:
+        participantId:
+          type: string
+        card:
+          type: string
+    Round:
+      type: object
+      required: [label, revealed, votes]
+      properties:
+        label:
+          type: string
+        jiraKey:
+          type: string
+        revealed:
+          type: boolean
+        votes:
+          type: array
+          description: Empty until the round is revealed.
+          items:
+            $ref: "#/components/schemas/Vote"
+    RoomState:
+      type: object
+      required: [code, expiresAt, participants]
+      properties:
+        code:
+          type: string
+        expiresAt:
+          type: string
+          format: date-time
+        participants:
+          type: array
+          items:
+            $ref: "#/components/schemas/Participant"
+        round:
+          $ref: "#/components/schemas/Round"
+        ownVote:
+          type: string
+          description: The caller's own card in the current round, if any.
