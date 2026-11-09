@@ -25,7 +25,7 @@ set -a && . ./.env && set +a && go run ./cmd/server
 
 | Command | Purpose |
 |---|---|
-| `make generate` | Regenerate `api/generated` from `api/openapi.yaml` |
+| `make generate` | Regenerate `internal/api/generated` from `api/openapi.yaml` |
 | `make build` | Build every package |
 | `make test` | Unit tests with the race detector |
 | `make test-integration` | Unit and integration tests against the compose MySQL (`make up` first) |

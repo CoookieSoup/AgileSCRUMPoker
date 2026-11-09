@@ -58,7 +58,7 @@ linters:
   exclusions:
     generated: strict
     paths:
-      - api/generated
+      - internal/api/generated
 
 formatters:
   enable:
@@ -67,4 +67,4 @@ formatters:
   exclusions:
     generated: strict
     paths:
-      - api/generated
+      - internal/api/generated

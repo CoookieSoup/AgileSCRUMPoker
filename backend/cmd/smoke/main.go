@@ -15,8 +15,8 @@ import (
 	"github.com/coder/websocket"
 	"github.com/coder/websocket/wsjson"
 
-	"github.com/CoookieSoup/AgileSCRUMPoker/backend/api/generated"
-	"github.com/CoookieSoup/AgileSCRUMPoker/backend/model"
+	"github.com/CoookieSoup/AgileSCRUMPoker/backend/internal/api/generated"
+	"github.com/CoookieSoup/AgileSCRUMPoker/backend/internal/model"
 )
 
 const (

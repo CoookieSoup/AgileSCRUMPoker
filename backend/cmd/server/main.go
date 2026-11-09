@@ -11,9 +11,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/CoookieSoup/AgileSCRUMPoker/backend/app"
-	"github.com/CoookieSoup/AgileSCRUMPoker/backend/config"
-	"github.com/CoookieSoup/AgileSCRUMPoker/backend/infra/mysql"
+	"github.com/CoookieSoup/AgileSCRUMPoker/backend/internal/app"
+	"github.com/CoookieSoup/AgileSCRUMPoker/backend/internal/config"
+	"github.com/CoookieSoup/AgileSCRUMPoker/backend/internal/infra/mysql"
 )
 
 const (
