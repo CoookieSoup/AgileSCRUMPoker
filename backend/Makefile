@@ -1,7 +1,7 @@
 TEST_DATABASE_DSN ?= poker:poker@tcp(127.0.0.1:3316)/poker?parseTime=true&loc=UTC
 export TEST_DATABASE_DSN
 
-.PHONY: generate build test test-integration lint vet up down
+.PHONY: generate build test test-integration lint vet up down smoke
 
 generate:
 	go tool oapi-codegen -config api/oapi-codegen.yaml api/openapi.yaml
@@ -27,3 +27,6 @@ up:
 
 down:
 	docker compose down -v
+
+smoke:
+	go run ./cmd/smoke

@@ -1,0 +1,60 @@
+### Manual endpoint checks for the VS Code REST Client or the JetBrains HTTP client.
+### Start the stack with `make up`, run "Create room", then paste the returned
+### room code and session tokens into the variables below.
+
+@baseUrl = http://localhost:8090/api/v1
+@code = PASTE_ROOM_CODE
+@hostToken = PASTE_HOST_SESSION_TOKEN
+@guestToken = PASTE_GUEST_SESSION_TOKEN
+
+### Health
+GET {{baseUrl}}/healthz
+
+### Create room (caller becomes host)
+POST {{baseUrl}}/rooms
+Content-Type: application/json
+
+{"displayName": "Ona"}
+
+### Join room
+POST {{baseUrl}}/rooms/{{code}}/participants
+Content-Type: application/json
+
+{"displayName": "Jonas"}
+
+### Get room state as guest
+GET {{baseUrl}}/rooms/{{code}}
+Authorization: Bearer {{guestToken}}
+
+### Start round (host only)
+POST {{baseUrl}}/rooms/{{code}}/round
+Authorization: Bearer {{hostToken}}
+Content-Type: application/json
+
+{"label": "Login page", "jiraKey": "ABC-123"}
+
+### Vote as guest (1, 2, 3, 5, 8, 13, 21)
+PUT {{baseUrl}}/rooms/{{code}}/round/vote
+Authorization: Bearer {{guestToken}}
+Content-Type: application/json
+
+{"card": "8"}
+
+### Vote as host
+PUT {{baseUrl}}/rooms/{{code}}/round/vote
+Authorization: Bearer {{hostToken}}
+Content-Type: application/json
+
+{"card": "5"}
+
+### Reveal votes (host only)
+POST {{baseUrl}}/rooms/{{code}}/round/reveal
+Authorization: Bearer {{hostToken}}
+
+### Leave room as guest
+DELETE {{baseUrl}}/rooms/{{code}}/participants/me
+Authorization: Bearer {{guestToken}}
+
+### Close room (host only)
+DELETE {{baseUrl}}/rooms/{{code}}
+Authorization: Bearer {{hostToken}}
