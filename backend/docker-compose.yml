@@ -1,0 +1,17 @@
+name: scrum-poker
+
+services:
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: poker
+      MYSQL_USER: poker
+      MYSQL_PASSWORD: poker
+      MYSQL_ROOT_PASSWORD: poker-root
+    ports:
+      - "${MYSQL_PORT:-3316}:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-upoker", "-ppoker"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
