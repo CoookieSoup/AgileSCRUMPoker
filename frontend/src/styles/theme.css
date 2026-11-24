@@ -1,0 +1,65 @@
+:root {
+  --bg: #161616;
+  --bg-raised: #1e1f21;
+  --surface: #232427;
+  --surface-hover: #2b2d31;
+  --border: #34363b;
+  --text: #ecebe6;
+  --text-muted: #a3a3a3;
+  --accent: #2fb57d;
+  --accent-strong: #3ccf91;
+  --accent-glow: rgba(47, 181, 125, 0.35);
+  --primary: #5aa2f5;
+  --primary-hover: #74b2f8;
+  --danger: #e5675f;
+  --felt: #232323;
+  --radius: 12px;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-display: "Poppins", "Inter", system-ui, sans-serif;
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  margin: 0;
+}
+
+button,
+input,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
