@@ -31,13 +31,18 @@ export function useRoom(code: string, session: StoredSession) {
     setView((current) => ({ ...current, status: "ended", endedReason: reason }));
   }, []);
 
+  // Once the room has ended, later connection trouble must not replace that screen.
+  const setStatus = useCallback((status: "reconnecting" | "unauthorized") => {
+    setView((current) => (current.status === "ended" ? current : { ...current, status }));
+  }, []);
+
   const handleError = useCallback(
     (error: unknown) => {
-      if (error instanceof ApiError && error.status === 401) setView({ status: "unauthorized" });
+      if (error instanceof ApiError && error.status === 401) setStatus("unauthorized");
       else if (error instanceof ApiError && error.code === "room_not_found") end("closed");
-      else setView((current) => ({ ...current, status: "reconnecting" }));
+      else setStatus("reconnecting");
     },
-    [end],
+    [end, setStatus],
   );
 
   useEffect(() => {
@@ -61,17 +66,20 @@ export function useRoom(code: string, session: StoredSession) {
           });
       },
       onEvent: (event) => {
-        if (event.type === "room_closed") return end(event.payload.reason);
+        if (event.type === "room_closed") {
+          stop();
+          return end(event.payload.reason);
+        }
         if (buffer) return void buffer.push(event);
         if (roomRef.current) setRoom(applyEvent(roomRef.current, event));
       },
-      onDisconnect: () => setView((current) => ({ ...current, status: "reconnecting" })),
-      onUnauthorized: () => setView({ status: "unauthorized" }),
+      onDisconnect: () => setStatus("reconnecting"),
+      onUnauthorized: () => setStatus("unauthorized"),
       onRoomGone: () => end("closed"),
     });
 
     return stop;
-  }, [code, token, setRoom, end, handleError]);
+  }, [code, token, setRoom, end, setStatus, handleError]);
 
   const vote = useCallback(
     async (card: string) => {
