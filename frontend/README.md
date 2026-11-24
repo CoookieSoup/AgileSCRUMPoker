@@ -22,3 +22,9 @@ Set `API_TARGET` to proxy somewhere else, for example `API_TARGET=http://localho
 | `npm run lint` | ESLint |
 | `npm run typecheck` | TypeScript only |
 | `npm test` | Unit tests (Vitest) |
+
+## Docker
+
+`make up` in `../backend` also builds this app into an nginx image and serves it on
+<http://localhost:8091>. nginx proxies `/api` (including the WebSocket stream) to the
+backend, so the browser only talks to one origin.
