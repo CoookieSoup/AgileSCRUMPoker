@@ -10,7 +10,7 @@ Go service for short-lived planning poker rooms: no accounts, at most 20 partici
 Requires Docker and Go 1.26+.
 
 ```sh
-make up      # MySQL on :3316 and the API on http://localhost:8090
+make up      # MySQL on :3316, the API on http://localhost:8090, the web app on http://localhost:8091
 make down    # stop and delete the data
 ```
 
