@@ -2,6 +2,7 @@
 
 Go service for short-lived planning poker rooms: no accounts, at most 20 participants, rooms expire after one hour.
 
+- How it works, endpoint by endpoint: [`docs/overview.md`](docs/overview.md)
 - REST contract: [`api/openapi.yaml`](api/openapi.yaml)
 - Realtime protocol: [`docs/realtime.md`](docs/realtime.md)
 
